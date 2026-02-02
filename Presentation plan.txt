@@ -1,0 +1,17 @@
+Presentation plan
+
+1) What is topology? General overview, open sets, essentially finding n dimensional holes. Topological properties - properties dependent ONLY on open sets of a space 
+
+2) Homeomorphic spaces have the same properties - ? Spaces that can be continuously deformed to one another, vaguely.
+Rigorously, two spaces are homeomorphic if there exists a continuous bijection which has continuous inverse between them. Generalises above, e.g. trefoil knot and circle are homeomorphic, but cannot be continuously deformed to one another (knot image, circle image)
+
+3) How does this apply to data? We are trying to understand the topological properties of underlying shape of data. In particular, we want to find the homology groups, essentially these are the n dimensional holes in a space
+
+4) How do we construct the space from the data? Choose what data points to connect using some scale parameter, result is simplicial complex. We can very efficiently compute the homology groups of these. However, there is a problem as there is no definitive way to decide which points to connect (Show example)
+
+5) Thus, we look at all possible scale parameters, end up with system of inclusion, where each simplex has a set of homology groups. Changes in homology groups are as a direct result of more points being connected. We can think of groups being born and then dying as the scale parameter increases
+
+6) Bar chart and scatter plot, explain how both work and are equivalent
+
+7) Important fact -> We only need distances!!
+
