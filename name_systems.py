@@ -10,7 +10,39 @@ import dionysus as d
 
 #from openpyxl import load_workbook
 
+from phonemizer import phonemize
+import panphon
+import panphon.distance as pfd
 
+
+
+
+
+
+def ipa(word, lang="en-gb-x-rp"):
+    return phonemize(
+        word,
+        language=lang,
+        backend="espeak",
+        strip=True
+    )
+
+
+
+dst = pfd.Distance()
+
+def feature_distance(w1, w2, lang="en-gb-x-rp"):
+    p1 = ipa(w1, lang)
+    p2 = ipa(w2, lang)
+    return dst.weighted_feature_edit_distance(p1, p2)
+
+
+
+
+print(feature_distance("Olivia", "Ahmed"))
+print(feature_distance("Amy", "Amy"))
+print(feature_distance("Amy", "Bob"))
+print(feature_distance("Olivia", "Oliver"))
 
 
 def create_dist_mat(word_list):
@@ -32,6 +64,31 @@ def create_dist_mat(word_list):
             dist_mat[i,j] = dist_mat[j,i] = 0.2*names_dist + 0.8*sound_dist
     return dist_mat
 
+
+
+def create_dist_mat_2(word_list):
+    n = len(word_list)
+    #phon_list = []
+    #for text in word_list:
+    #    for sentence in gruut.sentences(text, lang="en"):
+    #        for word in sentence:
+    #            phon = "".join(word.phonemes)
+    #            phon_list.append(phon)
+    #            #print(word.text, word.phonemes)
+    ipa_list = [ipa(name) for name in word_list]
+    dist_mat = np.zeros([n,n])
+
+    for i in range(n):
+        for j in range(i,n):
+            names_dist = jellyfish.levenshtein_distance(word_list[i],word_list[j])/max(len(word_list[i]),len(word_list[j]))
+            #sound_dist = jellyfish.levenshtein_distance(phon_list[i],phon_list[j])/max(len(phon_list[i]),len(phon_list[j]))
+            #dist_mat[i,j] = dist_mat[j,i] = feature_distance(word_list[i], word_list[j])
+            d = dst.weighted_feature_edit_distance(
+                ipa_list[i],
+                ipa_list[j]
+            )
+            dist_mat[i, j] = dist_mat[j, i] = d + 5 * names_dist
+    return dist_mat
 
 
 
@@ -64,7 +121,7 @@ def name_mat_weighted_count(df):
     names = list(df["Name"])
     counts = list(df["Count"])
     n = len(names)
-    unweighted_mat = create_dist_mat(names)
+    unweighted_mat = create_dist_mat_2(names)
     weighted_mat = np.zeros([n,n])
     # Apply weighting function.
     for i in range(n):
@@ -82,8 +139,10 @@ def name_mat_weighted_count(df):
 #print(name_mat_weighted_count(df_combined.head()))
 #print(df_combined.head(n=500).tail(n=1))
 
-names, weighted_mat, unweighted_mat = name_mat_weighted_count(df_combined.head(n=200))
+names, weighted_mat, unweighted_mat = name_mat_weighted_count(df_combined.head(n=10))
 
+
+print(unweighted_mat[0,1])
 
 '''
 rips = gd.RipsComplex(
@@ -149,14 +208,14 @@ for i in range(len(diagrams_1)):
 # We need to build the VR complex explicitly from the distance matrix.
 
 
-def build_vr_from_dist_mat(dist):
+def build_vr_from_dist_mat(dist, max_dist=np.inf):
     dist = unweighted_mat
     n = dist.shape[0]
 
     filt = d.Filtration()
 
     max_dim = 2
-    max_dist = 1.0  # adjust if needed
+    
 
     for i in range(n):
         filt.append(d.Simplex([i], 0.0))

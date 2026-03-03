@@ -1189,7 +1189,7 @@ def Most_Common(lst):
 def corner_spotter(matrix):
     """"
     - We start by finding an estimate for the topology, using a VR complex (FOR NOW) at various values of epsilon on the data matrix
-    - Next, we construct the tangent field. Note that this currently works in two dimensions
+    - Next, we construct the tangent field. Note that this currently works only in two dimensions
     - The tangent is added as a feature to each data point, and the homology is recomputed
     - Changes in betti number indicate that a corner (in some dimension) is present
     - We currently use epsilon from twice the minimum distance to 1/5 the maximum distance between points
@@ -1347,7 +1347,7 @@ def est_dim(data, min_scale = 0, max_scale = np.inf, min_dim = 0, tol = 0):
             #if slope>=2:
             #print("for eigenvalue", j, ",slope is", slope)
             slopes.append(float(slope))
-        #print(slopes)
+        print(slopes)
 
         j = 0
         prev = 0
@@ -1487,7 +1487,7 @@ def dim_graph(data):
 #dim_graph(sphere)
 
 
-#av, _ = est_dim(sphere)
+av, _ = est_dim(helix)
 
 #print(av)
 
