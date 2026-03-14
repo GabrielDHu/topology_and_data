@@ -16,6 +16,13 @@ import panphon.distance as pfd
 
 
 
+'''
+Smaller file. Just contains the name system stuff, using espeak now (+ some levenshtein for distance between
+spelling and not just sound). Creates distance matrix, then runs algorithm to show persistent diagram (NOT bars)
+
+
+'''
+
 
 
 
@@ -132,14 +139,14 @@ def name_mat_weighted_count(df):
             scaled = distance + (1-distance) * np.exp(-min_count/20)
             weighted_mat[i,j] = scaled#unweighted_mat[i,j] * scale_factor
     
-    return names, weighted_mat, unweighted_mat
+    return names, unweighted_mat
     
 
 
 #print(name_mat_weighted_count(df_combined.head()))
 #print(df_combined.head(n=500).tail(n=1))
 
-names, weighted_mat, unweighted_mat = name_mat_weighted_count(df_combined.head(n=10))
+names, unweighted_mat = name_mat_weighted_count(df_combined.head(n=10))
 
 
 print(unweighted_mat[0,1])
